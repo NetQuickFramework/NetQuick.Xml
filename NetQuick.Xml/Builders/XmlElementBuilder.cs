@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NetQuick.Core.Builders;
+using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace NetQuick.Xml.Builders
@@ -6,7 +8,7 @@ namespace NetQuick.Xml.Builders
     /// <summary>
     /// Builds a new <see cref="XmlElement"/> based on its name.
     /// </summary>
-    public class XmlElementBuilder
+    public class XmlElementBuilder : IBuilder<XmlElement>
     {
         readonly string _name;
         readonly IList<XmlElementBuilder> _childElementBuilders;
@@ -16,11 +18,9 @@ namespace NetQuick.Xml.Builders
         internal XmlElementBuilder(XmlDocument xmlDocument, string name)
         {
             if (string.IsNullOrEmpty(name))
-                throw new System.ArgumentNullException(nameof(name));
-            if (xmlDocument == null)
-                throw new System.ArgumentNullException(nameof(xmlDocument));
+                throw new ArgumentException("Attribute name cannot be null or empty.");
 
-            _xmlDocument = xmlDocument;
+            _xmlDocument = xmlDocument ?? throw new System.ArgumentNullException(nameof(xmlDocument));
             _name = name;
 
             _childElementBuilders = new List<XmlElementBuilder>();
@@ -45,6 +45,18 @@ namespace NetQuick.Xml.Builders
             }
 
             return xmlElement;
+        }
+
+        /// <summary>
+        /// Adds a namespace to the current element.
+        /// </summary>
+        /// <param name="nameSpace"></param>
+        /// <param name="namespaceReference"></param>
+        /// <returns></returns>
+        public XmlElementBuilder AddNamespace(string nameSpace, string namespaceReference)
+        {
+            _attributeBuilders.Add(new XmlAttributeBuilder(_xmlDocument, $"xmlns:{nameSpace}", namespaceReference));
+            return this;
         }
 
         /// <summary>

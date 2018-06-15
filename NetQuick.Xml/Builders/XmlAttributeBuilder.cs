@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Xml;
 
 namespace NetQuick.Xml.Builders
@@ -11,7 +12,11 @@ namespace NetQuick.Xml.Builders
 
         public XmlAttributeBuilder(XmlDocument xmlDocument, string name, string value)
         {
-            XmlDocument = xmlDocument;
+            XmlDocument = xmlDocument ?? throw new ArgumentNullException(nameof(xmlDocument));
+
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException("Attribute name cannot be null or empty.");
+
             Value = value;
             Name = name;
         }

@@ -1,25 +1,45 @@
-﻿using System;
+﻿using NetQuick.Core.Builders;
+using System;
 using System.Xml;
 
 namespace NetQuick.Xml.Builders
 {
-    public class XmlDocumentBuilder
+    public class XmlDocumentBuilder : IBuilder<XmlDocument>
     {
         XmlDocument _xmlDocument;
         XmlElementBuilder _rootElementBuilder;
         bool _useXmlDeclaration;
 
-        public XmlDocumentBuilder()
-        {          
-            _xmlDocument = new XmlDocument();
+        internal XmlDocumentBuilder(XmlDocument xmlDocument)
+        {
+            _xmlDocument = xmlDocument ?? throw new ArgumentNullException(nameof(xmlDocument));
+        }     
+
+        /// <summary>
+        /// Initializes a new document builder.
+        /// </summary>
+        /// <returns></returns>
+        public static XmlDocumentBuilder Initialize()
+        {
+            return new XmlDocumentBuilder(new XmlDocument());
         }
 
+        /// <summary>
+        /// Adds the xml declaration line to the generated <see cref="XmlDocument"/>.
+        /// </summary>
+        /// <param name="useXmlDeclaration"></param>
+        /// <returns></returns>
         public XmlDocumentBuilder UseXmlDeclaration(bool useXmlDeclaration = true)
         {
             _useXmlDeclaration = useXmlDeclaration;
             return this;
         }
 
+        /// <summary>
+        /// Adds the root (main) element to the <see cref="XmlDocument"/>.
+        /// </summary>
+        /// <param name="name">The name of the </param>
+        /// <returns>The related builder.</returns>
         public XmlElementBuilder AddRootElement(string name)
         {
             if (_rootElementBuilder != null)
